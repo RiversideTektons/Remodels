@@ -25,17 +25,24 @@ h1 {
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
+/* Both images stacked */
 .slider-container img {
   width: 100%;
   display: block;
-}
-
-.overlay {
   position: absolute;
   top: 0;
   left: 0;
-  width: 0%; /* Start hidden */
-  overflow: hidden;
+}
+
+/* Top image (Before) */
+#beforeImage {
+  width: 100%; /* fully visible at start */
+  z-index: 2;
+}
+
+/* Bottom image (After) stays full width behind */
+#afterImage {
+  z-index: 1;
 }
 
 .slider-labels {
@@ -48,11 +55,18 @@ h1 {
 input[type="range"] {
   width: 100%;
   margin-top: 10px;
+  -webkit-appearance: none;
+  height: 5px;
+  border-radius: 5px;
+  background: #ccc;
 }
-
-/* Optional: smooth dragging on mobile */
-.overlay img {
-  transition: width 0.2s ease;
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #333;
+  cursor: pointer;
 }
 </style>
 </head>
@@ -60,11 +74,9 @@ input[type="range"] {
 
 <h1>Kitchen Remodel Reveal</h1>
 
-<div class="slider-container">
-  <img src="before.jpg" alt="Before Remodel">
-  <div class="overlay" id="overlay">
-    <img src="after.jpg" alt="After Remodel">
-  </div>
+<div class="slider-container" style="height: 400px; position: relative;">
+  <img src="after.jpg" id="afterImage" alt="After Remodel">
+  <img src="before.jpg" id="beforeImage" alt="Before Remodel">
 </div>
 
 <div class="slider-labels">
@@ -72,14 +84,14 @@ input[type="range"] {
   <span>After</span>
 </div>
 
-<input type="range" min="0" max="100" value="0" id="slider">
+<input type="range" min="0" max="100" value="100" id="slider">
 
 <script>
 const slider = document.getElementById('slider');
-const overlay = document.getElementById('overlay');
+const beforeImage = document.getElementById('beforeImage');
 
 slider.addEventListener('input', function() {
-  overlay.style.width = slider.value + '%';
+  beforeImage.style.width = slider.value + '%';
 });
 </script>
 
