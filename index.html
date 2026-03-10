@@ -111,53 +111,54 @@ slider.addEventListener('input', () => {
   beforeImage.style.width = val + "%";
 
   if (val < 100) {
-    autoSlide = false; // pause while dragging
+    autoSlide = false;
   } else if (val >= 100) {
-    setTimeout(() => { autoSlide = true; }, 500); // resume 0.5s after fully revealed
+    setTimeout(() => { autoSlide = true; }, 500);
   }
 });
 
-// --- Show a specific project ---
+// --- Show project immediately with After fully right ---
 function showProject(index) {
   projectDiv.classList.remove('show');
   setTimeout(() => {
     beforeImage.src = projects[index].before;
     afterImage.src = projects[index].after;
-    beforeImage.style.width = "100%";
+    beforeImage.style.width = "100%"; // start fully covering
     slider.value = 100;
     projectDiv.classList.add('show');
     autoSlide = true;
-  }, 500); // fade duration
+  }, 500);
 }
 
-// --- Auto Reveal Function for current project ---
+// --- Auto reveal per project ---
 function autoReveal() {
   if (!autoSlide) return;
 
-  // 1️⃣ Hold Before image 5s
+  // 1️⃣ Hold Before image for 5s
   setTimeout(() => {
     if (!autoSlide) return;
 
     // 2️⃣ Reveal After image over 5s
-    beforeImage.style.width = "0%";
+    beforeImage.style.width = "0%"; // slide to left
 
-    // 3️⃣ Hold fully revealed After 5s
+    // 3️⃣ Hold After fully revealed for 5s
     setTimeout(() => {
       if (!autoSlide) return;
 
-      // 4️⃣ Fade out and move to next project
+      // 4️⃣ Fade out, then show next project
       projectDiv.classList.remove('show');
       setTimeout(() => {
         currentProject = (currentProject + 1) % projects.length;
         showProject(currentProject);
       }, 500); // fade duration
-    }, 5000); // After hold
-  }, 5000); // Before hold
+    }, 5000); // post-reveal hold
+  }, 5000); // pre-reveal hold
 }
 
 // --- Start slideshow ---
 showProject(currentProject);
-setInterval(autoReveal, 16000); // 5s Before + 5s reveal + 5s After hold + 1s fade
+setInterval(autoReveal, 16000); 
+// total cycle = 5s Before + 5s reveal + 5s After hold + 1s fade
 </script>
 
 </body>
