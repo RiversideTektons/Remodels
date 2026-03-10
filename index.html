@@ -1,63 +1,85 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitchen Remodel Slider</title>
 <style>
-body{
-  font-family: Arial;
-  text-align:center;
-  background:#f4f4f4;
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  text-align: center;
+  padding: 20px;
 }
 
-.container{
-  position:relative;
-  max-width:600px;
-  margin:auto;
+h1 {
+  margin-bottom: 20px;
 }
 
-img{
-  width:100%;
-  display:block;
+.slider-container {
+  position: relative;
+  max-width: 700px;
+  margin: auto;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-.overlay{
-  position:absolute;
-  top:0;
-  left:0;
-  width:50%;
-  overflow:hidden;
+.slider-container img {
+  width: 100%;
+  display: block;
 }
 
-.slider{
-  width:100%;
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%; /* Start hidden */
+  overflow: hidden;
 }
 
-input[type=range]{
-  width:100%;
-  margin-top:10px;
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* Optional: smooth dragging on mobile */
+.overlay img {
+  transition: width 0.2s ease;
 }
 </style>
 </head>
-
 <body>
 
-<h2>Remodel Before / After</h2>
+<h1>Kitchen Remodel Reveal</h1>
 
-<div class="container">
-  <img src="after.jpg">
+<div class="slider-container">
+  <img src="before.jpg" alt="Before Remodel">
   <div class="overlay" id="overlay">
-    <img src="before.jpg">
+    <img src="after.jpg" alt="After Remodel">
   </div>
 </div>
 
-<input type="range" min="0" max="100" value="50" id="slider">
+<div class="slider-labels">
+  <span>Before</span>
+  <span>After</span>
+</div>
+
+<input type="range" min="0" max="100" value="0" id="slider">
 
 <script>
-const slider = document.getElementById("slider");
-const overlay = document.getElementById("overlay");
+const slider = document.getElementById('slider');
+const overlay = document.getElementById('overlay');
 
-slider.addEventListener("input", function(){
-  overlay.style.width = slider.value + "%";
+slider.addEventListener('input', function() {
+  overlay.style.width = slider.value + '%';
 });
 </script>
 
