@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Before/After Remodel</title>
+<title>Multi-Project Remodel Portfolio</title>
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -12,9 +12,7 @@ body {
   padding: 20px;
 }
 
-h1 {
-  margin-bottom: 20px;
-}
+h1 { margin-bottom: 20px; }
 
 .project-container {
   position: relative;
@@ -38,12 +36,10 @@ h1 {
 #beforeImage {
   z-index: 2;
   width: 100%;
-  transition: width 5s linear; /* 5-second reveal */
+  transition: width 5s linear;
 }
 
-#afterImage {
-  z-index: 1;
-}
+#afterImage { z-index: 1; }
 
 input[type="range"] {
   width: 90%;
@@ -53,7 +49,6 @@ input[type="range"] {
   border-radius: 5px;
   background: #ccc;
 }
-
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 20px;
@@ -74,18 +69,16 @@ input[type="range"]::-webkit-slider-thumb {
   opacity: 0;
   transition: opacity 1s ease;
 }
-.fade-project.show {
-  opacity: 1;
-}
+.fade-project.show { opacity: 1; }
 </style>
 </head>
 <body>
 
-<h1>Before/After Remodel</h1>
+<h1>Multi-Project Remodel Portfolio</h1>
 
 <div class="project-container fade-project show" id="project">
-  <img src="after.jpg" id="afterImage" alt="After Remodel">
-  <img src="before.jpg" id="beforeImage" alt="Before Remodel">
+  <img src="project1-after.jpg" id="afterImage" alt="After Remodel">
+  <img src="project1-before.jpg" id="beforeImage" alt="Before Remodel">
 </div>
 
 <div class="slider-labels">
@@ -96,9 +89,17 @@ input[type="range"]::-webkit-slider-thumb {
 <input type="range" min="0" max="100" value="100" id="slider">
 
 <script>
-// --- Setup ---
+// --- Projects Configuration ---
+const projects = [
+  {before:"project1-before.jpg", after:"project1-after.jpg"},
+  {before:"project2-before.jpg", after:"project2-after.jpg"},
+  {before:"project3-before.jpg", after:"project3-after.jpg"}
+];
+
+let currentProject = 0;
 let autoSlide = true;
 
+// --- DOM Elements ---
 const beforeImage = document.getElementById('beforeImage');
 const afterImage = document.getElementById('afterImage');
 const slider = document.getElementById('slider');
@@ -116,35 +117,47 @@ slider.addEventListener('input', () => {
   }
 });
 
-// --- Auto Reveal Function with pre-hold, reveal, post-hold ---
+// --- Show a specific project ---
+function showProject(index) {
+  projectDiv.classList.remove('show');
+  setTimeout(() => {
+    beforeImage.src = projects[index].before;
+    afterImage.src = projects[index].after;
+    beforeImage.style.width = "100%";
+    slider.value = 100;
+    projectDiv.classList.add('show');
+    autoSlide = true;
+  }, 500); // fade duration
+}
+
+// --- Auto Reveal Function for current project ---
 function autoReveal() {
   if (!autoSlide) return;
 
-  // 1️⃣ Hold the Before image for 5 seconds
+  // 1️⃣ Hold Before image 5s
   setTimeout(() => {
     if (!autoSlide) return;
 
-    // 2️⃣ Start the 5-second reveal
-    beforeImage.style.width = "0%"; // CSS transition handles the 5s reveal
+    // 2️⃣ Reveal After image over 5s
+    beforeImage.style.width = "0%";
 
-    // 3️⃣ After reveal finishes, hold fully revealed After image for 5 seconds
+    // 3️⃣ Hold fully revealed After 5s
     setTimeout(() => {
       if (!autoSlide) return;
 
-      // 4️⃣ Fade out and reset
+      // 4️⃣ Fade out and move to next project
       projectDiv.classList.remove('show');
       setTimeout(() => {
-        beforeImage.style.width = "100%";
-        slider.value = 100;
-        projectDiv.classList.add('show');
+        currentProject = (currentProject + 1) % projects.length;
+        showProject(currentProject);
       }, 500); // fade duration
-    }, 5000); // post-reveal hold for 5s
-  }, 5000); // hold Before image for 5s
+    }, 5000); // After hold
+  }, 5000); // Before hold
 }
 
-// --- Start the slideshow ---
-setInterval(autoReveal, 16000); 
-// total cycle = 5s Before hold + 5s reveal + 5s After hold + 1s fade buffer
+// --- Start slideshow ---
+showProject(currentProject);
+setInterval(autoReveal, 16000); // 5s Before + 5s reveal + 5s After hold + 1s fade
 </script>
 
 </body>
