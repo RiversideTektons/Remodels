@@ -96,7 +96,7 @@ input[type="range"]::-webkit-slider-thumb {
 <input type="range" min="0" max="100" value="100" id="slider">
 
 <script>
-// Single project setup
+// --- Setup ---
 let autoSlide = true;
 
 const beforeImage = document.getElementById('beforeImage');
@@ -104,7 +104,7 @@ const afterImage = document.getElementById('afterImage');
 const slider = document.getElementById('slider');
 const projectDiv = document.getElementById('project');
 
-// Slider control with resume trigger
+// --- Slider control with resume trigger ---
 slider.addEventListener('input', () => {
   const val = slider.value;
   beforeImage.style.width = val + "%";
@@ -116,35 +116,33 @@ slider.addEventListener('input', () => {
   }
 });
 
-// Auto reveal function
+// --- Auto Reveal Function with hold before/after ---
 function autoReveal() {
   if (!autoSlide) return;
 
-  let val = 100; // start fully covering
-  const step = 100 / (5*20); // 5 seconds, 50ms interval → 100 steps
+  // 1️⃣ Hold the before image for 5 seconds
+  setTimeout(() => {
+    if (!autoSlide) return;
 
-  const interval = setInterval(() => {
-    if (!autoSlide) { clearInterval(interval); return; }
-    val -= step;
-    if (val <= 0) {
-      val = 0;
-      clearInterval(interval);
-      setTimeout(() => {
-        // fade out and fade in again for repeat
-        projectDiv.classList.remove('show');
-        setTimeout(() => projectDiv.classList.add('show'), 500);
-        // reset slider
-        beforeImage.style.width = "100%";
-        slider.value = 100;
-      }, 1000);
-    }
-    slider.value = val;
-    beforeImage.style.width = val + "%";
-  }, 50);
+    // 2️⃣ Start the 5-second reveal
+    beforeImage.style.width = "0%"; // CSS transition handles the 5s reveal
+  }, 5000); // 5s hold before reveal
+
+  // 3️⃣ After reveal finishes, wait 1s then fade out and reset
+  setTimeout(() => {
+    if (!autoSlide) return;
+
+    projectDiv.classList.remove('show');
+    setTimeout(() => {
+      beforeImage.style.width = "100%";
+      slider.value = 100;
+      projectDiv.classList.add('show');
+    }, 500); // fade out duration
+  }, 5000 + 5000 + 500); // hold 5s + reveal 5s + buffer 0.5s
 }
 
-// Start the slideshow
-setInterval(autoReveal, 7000); // repeat every 7s (5s reveal + 2s buffer)
+// --- Start the slideshow ---
+setInterval(autoReveal, 11000); // total cycle 11s: 5s hold + 5s reveal + fade buffer
 </script>
 
 </body>
