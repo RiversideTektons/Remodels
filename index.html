@@ -116,33 +116,35 @@ slider.addEventListener('input', () => {
   }
 });
 
-// --- Auto Reveal Function with hold before/after ---
+// --- Auto Reveal Function with pre-hold, reveal, post-hold ---
 function autoReveal() {
   if (!autoSlide) return;
 
-  // 1️⃣ Hold the before image for 5 seconds
+  // 1️⃣ Hold the Before image for 5 seconds
   setTimeout(() => {
     if (!autoSlide) return;
 
     // 2️⃣ Start the 5-second reveal
     beforeImage.style.width = "0%"; // CSS transition handles the 5s reveal
-  }, 5000); // 5s hold before reveal
 
-  // 3️⃣ After reveal finishes, wait 1s then fade out and reset
-  setTimeout(() => {
-    if (!autoSlide) return;
-
-    projectDiv.classList.remove('show');
+    // 3️⃣ After reveal finishes, hold fully revealed After image for 5 seconds
     setTimeout(() => {
-      beforeImage.style.width = "100%";
-      slider.value = 100;
-      projectDiv.classList.add('show');
-    }, 500); // fade out duration
-  }, 5000 + 5000 + 500); // hold 5s + reveal 5s + buffer 0.5s
+      if (!autoSlide) return;
+
+      // 4️⃣ Fade out and reset
+      projectDiv.classList.remove('show');
+      setTimeout(() => {
+        beforeImage.style.width = "100%";
+        slider.value = 100;
+        projectDiv.classList.add('show');
+      }, 500); // fade duration
+    }, 5000); // post-reveal hold for 5s
+  }, 5000); // hold Before image for 5s
 }
 
 // --- Start the slideshow ---
-setInterval(autoReveal, 11000); // total cycle 11s: 5s hold + 5s reveal + fade buffer
+setInterval(autoReveal, 16000); 
+// total cycle = 5s Before hold + 5s reveal + 5s After hold + 1s fade buffer
 </script>
 
 </body>
