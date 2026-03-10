@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interactive Remodel Portfolio</title>
+<title>Before/After Remodel</title>
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -19,7 +19,7 @@ h1 {
 .project-container {
   position: relative;
   max-width: 700px;
-  margin: auto 0 40px;
+  margin: auto;
   overflow: hidden;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -38,7 +38,7 @@ h1 {
 #beforeImage {
   z-index: 2;
   width: 100%;
-  transition: width 5s linear; /* Slow 5-second reveal */
+  transition: width 5s linear; /* 5-second reveal */
 }
 
 #afterImage {
@@ -81,11 +81,11 @@ input[type="range"]::-webkit-slider-thumb {
 </head>
 <body>
 
-<h1>Interactive Remodel Portfolio</h1>
+<h1>Before/After Remodel</h1>
 
 <div class="project-container fade-project show" id="project">
-  <img src="project1-after.jpg" id="afterImage" alt="After Remodel">
-  <img src="project1-before.jpg" id="beforeImage" alt="Before Remodel">
+  <img src="after.jpg" id="afterImage" alt="After Remodel">
+  <img src="before.jpg" id="beforeImage" alt="Before Remodel">
 </div>
 
 <div class="slider-labels">
@@ -96,23 +96,15 @@ input[type="range"]::-webkit-slider-thumb {
 <input type="range" min="0" max="100" value="100" id="slider">
 
 <script>
-// --- Projects Configuration ---
-const projects = [
-  {before:"project1-before.jpg", after:"project1-after.jpg"},
-  {before:"project2-before.jpg", after:"project2-after.jpg"},
-  {before:"project3-before.jpg", after:"project3-after.jpg"}
-];
-
-let currentProject = 0;
+// Single project setup
 let autoSlide = true;
 
-// --- DOM Elements ---
 const beforeImage = document.getElementById('beforeImage');
 const afterImage = document.getElementById('afterImage');
 const slider = document.getElementById('slider');
 const projectDiv = document.getElementById('project');
 
-// --- Slider Control with Resume Trigger ---
+// Slider control with resume trigger
 slider.addEventListener('input', () => {
   const val = slider.value;
   beforeImage.style.width = val + "%";
@@ -124,27 +116,8 @@ slider.addEventListener('input', () => {
   }
 });
 
-// --- Show a Project ---
-function showProject(index) {
-  // Fade out
-  projectDiv.classList.remove('show');
-
-  setTimeout(() => {
-    beforeImage.src = projects[index].before;
-    afterImage.src = projects[index].after;
-    beforeImage.style.width = "100%";
-    slider.value = 100;
-
-    // Fade in
-    projectDiv.classList.add('show');
-
-    // Resume autoSlide after fade
-    autoSlide = true;
-  }, 1000); // match fade duration
-}
-
-// --- Auto Reveal ---
-function autoAdvance() {
+// Auto reveal function
+function autoReveal() {
   if (!autoSlide) return;
 
   let val = 100; // start fully covering
@@ -157,18 +130,21 @@ function autoAdvance() {
       val = 0;
       clearInterval(interval);
       setTimeout(() => {
-        currentProject = (currentProject + 1) % projects.length;
-        showProject(currentProject);
-      }, 1000); // wait 1s before next project fade
+        // fade out and fade in again for repeat
+        projectDiv.classList.remove('show');
+        setTimeout(() => projectDiv.classList.add('show'), 500);
+        // reset slider
+        beforeImage.style.width = "100%";
+        slider.value = 100;
+      }, 1000);
     }
     slider.value = val;
     beforeImage.style.width = val + "%";
   }, 50);
 }
 
-// --- Start Slideshow ---
-showProject(currentProject);
-setInterval(autoAdvance, 7000); // every 7s start automatic reveal (5s reveal + 2s buffer)
+// Start the slideshow
+setInterval(autoReveal, 7000); // repeat every 7s (5s reveal + 2s buffer)
 </script>
 
 </body>
