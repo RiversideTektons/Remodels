@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kitchen Remodel Slider</title>
+<title>Interactive Remodel Portfolio</title>
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -16,44 +16,36 @@ h1 {
   margin-bottom: 20px;
 }
 
-.slider-container {
+.project-container {
   position: relative;
   max-width: 700px;
-  margin: auto;
+  margin: auto 0 40px;
   overflow: hidden;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  height: 400px;
 }
 
-/* Both images stacked */
-.slider-container img {
+.project-container img {
   width: 100%;
-  display: block;
+  height: 100%;
+  object-fit: cover;
   position: absolute;
   top: 0;
   left: 0;
 }
 
-/* Top image (Before) */
 #beforeImage {
-  width: 100%; /* fully visible at start */
   z-index: 2;
+  width: 100%;
 }
 
-/* Bottom image (After) stays full width behind */
 #afterImage {
   z-index: 1;
 }
 
-.slider-labels {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 5px;
-  font-weight: bold;
-}
-
 input[type="range"] {
-  width: 100%;
+  width: 90%;
   margin-top: 10px;
   -webkit-appearance: none;
   height: 5px;
@@ -68,32 +60,98 @@ input[type="range"]::-webkit-slider-thumb {
   background: #333;
   cursor: pointer;
 }
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-weight: bold;
+}
+.fade {
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+.fade.show {
+  opacity: 1;
+}
 </style>
 </head>
 <body>
 
-<h1>Kitchen Remodel Reveal</h1>
+<h1>Interactive Remodel Portfolio</h1>
 
-<div class="slider-container" style="height: 400px; position: relative;">
-  <img src="after.jpg" id="afterImage" alt="After Remodel">
-  <img src="before.jpg" id="beforeImage" alt="Before Remodel">
+<div class="project-container fade show" id="project">
+  <img src="project1-after.jpg" id="afterImage" alt="After Remodel">
+  <img src="project1-before.jpg" id="beforeImage" alt="Before Remodel">
 </div>
 
 <div class="slider-labels">
   <span>Before</span>
   <span>After</span>
 </div>
-
 <input type="range" min="0" max="100" value="100" id="slider">
 
 <script>
-const slider = document.getElementById('slider');
+// --- Configuration ---
+const projects = [
+  {before:"project1-before.jpg", after:"project1-after.jpg"},
+  {before:"project2-before.jpg", after:"project2-after.jpg"},
+  {before:"project3-before.jpg", after:"project3-after.jpg"}
+];
+let currentProject = 0;
+let autoSlide = true;
+
+// --- DOM Elements ---
 const beforeImage = document.getElementById('beforeImage');
+const afterImage = document.getElementById('afterImage');
+const slider = document.getElementById('slider');
+const projectDiv = document.getElementById('project');
 
-slider.addEventListener('input', function() {
-  beforeImage.style.width = slider.value + '%';
+// --- Slider Control ---
+slider.addEventListener('input', () => {
+  const val = slider.value;
+  beforeImage.style.width = val + "%";
+  autoSlide = false; // Pause auto-slide while dragging
 });
-</script>
 
+// --- Show Next Project ---
+function showProject(index) {
+  beforeImage.style.width = "100%";
+  slider.value = 100;
+  beforeImage.src = projects[index].before;
+  afterImage.src = projects[index].after;
+  projectDiv.classList.remove('show');
+  setTimeout(() => {
+    projectDiv.classList.add('show');
+  }, 50);
+}
+
+// --- Auto Slide Timer ---
+function autoAdvance() {
+  if (autoSlide) {
+    // Slide Before → After automatically
+    let val = 100;
+    const interval = setInterval(() => {
+      if (!autoSlide) { clearInterval(interval); return; } // stop if slider dragged
+      val -= 2; // adjust speed (2% per 50ms)
+      if (val <= 0) {
+        val = 0;
+        clearInterval(interval);
+        setTimeout(() => {
+          // move to next project after 1s
+          currentProject = (currentProject + 1) % projects.length;
+          showProject(currentProject);
+        }, 1000);
+      }
+      slider.value = val;
+      beforeImage.style.width = val + "%";
+    }, 50);
+  }
+}
+
+// --- Start Slideshow ---
+showProject(currentProject);
+setInterval(autoAdvance, 5000); // every 5s start automatic reveal
+
+</script>
 </body>
 </html>
